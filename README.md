@@ -10,4 +10,5 @@ roslaunch mrobot_teleop mrobot_teleop.launch
 ## View Camera
 rqt_image_view
 ## Command control
-Simple command statements in Human_detection
+Simple command statements in Human_detectio  
+linear.x and angular.z these two parameters control the steering as well as the forward and backward movement of the trolley
