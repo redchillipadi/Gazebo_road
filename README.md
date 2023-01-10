@@ -9,5 +9,5 @@ roslaunch mrobot_gazebo my_gazebo3.launch
 roslaunch mrobot_teleop mrobot_teleop.launch
 ## View Camera
 rqt_image_view
-## 
+## Command control
 Simple command statements in Human_detection
