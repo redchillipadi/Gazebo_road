@@ -1,0 +1,35 @@
+     <launch>
+      <!-- Set the parameters of the launch file-->
+    <arg name="world_name" value="$(find mrobot_gazebo)/worlds/playground.world"/>
+    <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/>
+
+     <!-- Running the gazebo simulation environment-->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(arg world_name)" />
+        <arg name="debug" value="$(arg debug)" />
+        <arg name="gui" value="$(arg gui)" />
+        <arg name="paused" value="$(arg paused)"/>
+        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="headless" value="$(arg headless)"/>
+    </include>
+
+    <!-- Load robot model description parameters-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find mrobot_gazebo)/urdf/my_gazebo_robot_All.urdf.xacro'" />    
+
+    <!-- Run the joint_state_publisher node to publish the robot's joint state-->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node> 
+
+     <!-- Run robot_state_publisher node, publish tf -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"  output="screen" >
+        <param name="publish_frequency" type="double" value="50.0" />
+    </node>
+
+     <!-- Loading the robot model in gazebo -->
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+          args="-urdf -model mrobot -param robot_description"/> 
+
+</launch>
