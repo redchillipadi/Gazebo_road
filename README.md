@@ -9,8 +9,8 @@ catkin_make
 ## Command
 * Launch world  
 roslaunch mrobot_gazebo my_gazebo3.launch.   
-if there is can’t locate node [mrobot_teleop.py] in package [mrobot_teleop]. 
-chmod +x mrobot_teleop.py   
+if there is can’t locate node [mrobot_teleop.py] in package [mrobot_teleop]  
+run chmod +x mrobot_teleop.py   
 * Keyboard control commands.
 roslaunch mrobot_teleop mrobot_teleop.launch
 ## View Camera
