@@ -1,13 +1,13 @@
 # Gazebo_road
 
 ## Launching the simulation environment
-1.move the libActorCollisionsPlugin.so to the gazebo plugins directory, the default directory is /usr/lib/x86_64-linux-gnu/gazebo-9/plugins.
-2.Install dependency
-rosdep install --from-paths /home/your_direction/src --ignore-src
-3.Compile
-catkin_make
-4.Launch
-roslaunch mrobot_gazebo my_gazebo3.launch.   
+1.move the libActorCollisionsPlugin.so to the gazebo plugins directory, the default directory is /usr/lib/x86_64-linux-gnu/gazebo-9/plugins.  
+2.Install dependency  
+rosdep install --from-paths /home/your_direction/src --ignore-src  
+3.Compile  
+catkin_make  
+4.Launch  
+roslaunch mrobot_gazebo my_gazebo3.launch.     
 * if there is can’t locate node [mrobot_teleop.py] in package [mrobot_teleop]  
 run chmod +x mrobot_teleop.py   
 * Keyboard control commands.
