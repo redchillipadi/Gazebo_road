@@ -13,6 +13,8 @@
       </attenuation>
       <direction>0.5 0.1 -0.9</direction>
     </light>
+  <!-- walking person -->
+  <!-- The code to set the track is on line 134-->
   <actor name="actor">
     <plugin name="actor_collisions_plugin" filename="libActorCollisionsPlugin.so">
       <scaling collision="LHipJoint_LeftUpLeg_collision" scale="
@@ -129,18 +131,27 @@
       <loop>true</loop>
       <delay_start>0.000000</delay_start>
       <auto_start>true</auto_start>
+      <!--time is the time of arrival at the point, while the first three parameters of pose are the xyz coordinates of the arrival point, and the last three are the direction of the pedestrian at the time of arrival.1.57 is one-half π, facing to the left-->
       <trajectory id="0" type="walking">
           <waypoint>
             <time>0</time>
             <pose>0 -2.0 0 0 0 -1.57</pose>
           </waypoint>
-          <waypoint>
-            <time>20</time>
+            <waypoint>
+            <time>19</time>
             <pose>0 -10 0 0 0 -1.57</pose>
           </waypoint>
           <waypoint>
-            <time>30</time>
+            <time>20</time>
+            <pose>0 -10 0 0 0 1.57</pose>
+          </waypoint>
+          <waypoint>
+            <time>39</time>
             <pose>0 -2.0 0 0 0 1.57</pose>
+          </waypoint>
+          <waypoint>
+            <time>40</time>
+            <pose>0 -2.0 0 0 0 -1.57</pose>
           </waypoint>
       </trajectory>
     </script>
