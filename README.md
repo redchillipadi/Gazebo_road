@@ -26,3 +26,5 @@ linear.x and angular.z these two parameters control the steering as well as the 
 After running darknet_ros run   
 * rosrun human_detecon  humandetection_node
 
+## Simulation environment settings  
+Set the time and position of the pedestrian movement in the mrobot_gazebo/worlds/playground.world file
