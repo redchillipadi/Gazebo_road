@@ -23,7 +23,7 @@ https://github.com/leggedrobotics/darknet_ros
 4. Command 
 roslaunch darknet_ros darknet_ros.launch
 ##  Human_detectio   
-//linear.x and angular.z these two parameters control the steering as well as the forward and backward movement of the trolley
-//After running darknet_ros run  
+//linear.x and angular.z these two parameters control the steering as well as the forward and backward movement of the trolley  
+//After running darknet_ros run   
 rosrun human_detecon  humandetection_node
 
