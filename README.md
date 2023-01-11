@@ -15,6 +15,15 @@ run chmod +x mrobot_teleop.py
 roslaunch mrobot_teleop mrobot_teleop.launch
 ## View Camera
 rqt_image_view
-## Command control
-Simple command statements in Human_detectio  
-linear.x and angular.z these two parameters control the steering as well as the forward and backward movement of the trolley
+## Darnet_ros object detect
+1. Download the darknet_ros package  
+https://github.com/leggedrobotics/darknet_ros    
+2. Change the subscribe camera topic in darknet_ros/darknet_ros/config/ros.yaml
+3. Compile the package
+4. Command 
+roslaunch darknet_ros darknet_ros.launch
+##  Human_detectio   
+//linear.x and angular.z these two parameters control the steering as well as the forward and backward movement of the trolley
+//After running darknet_ros run  
+rosrun human_detecon  humandetection_node
+
