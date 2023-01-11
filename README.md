@@ -2,11 +2,11 @@
 
 ## Compile two files
 First to move the libActorCollisionsPlugin.so to the gazebo plugins directory, the default directory is /usr/lib/x86_64-linux-gnu/gazebo-9/plugins.
-### Install dependency
+* Install dependency
 rosdep install --from-paths /home/your_direction/src --ignore-src
-### compile
+* compile
 catkin_make
-## Command
+* Command
 * Launch world  
 roslaunch mrobot_gazebo my_gazebo3.launch.   
 * if there is can’t locate node [mrobot_teleop.py] in package [mrobot_teleop]  
