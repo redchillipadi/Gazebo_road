@@ -15,8 +15,8 @@
 	<!-- Attach the Kinect -->
 	<joint name="camera_joint" type="fixed">
 	<origin xyz="${camera_offset_x} ${camera_offset_y} ${camera_offset_z}" rpy="0 0 0" />
-	<parent link="plate_1_link"/>
-	<child link="laser"/>
+	<parent link="laser"/>
+	<child link="camera_link"/>
 	</joint>
 	<xacro:usb_camera prefix="camera"/>
 </robot>
