@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <robot name="my_sensors" xmlns:xacro="http://wiki.ros.org/xacro">
-
-  <!-- 雷达 -->
   <gazebo reference="laser">
     <sensor type="ray" name="rplidar">
       <pose>0 0 0 0 0 0</pose>
