@@ -1,7 +1,7 @@
 # Gazebo_road
 
 ## Launching the simulation environment
-1. move the libActorCollisionsPlugin.so to the gazebo plugins directory  
+1. move the libActorCollisionsPlugin.so and libgazebo_ros_laser.so to the gazebo plugins directory  
 the default directory is /usr/lib/x86_64-linux-gnu/gazebo-9/plugins.  
 2. Install dependency  
 rosdep install --from-paths /home/your_direction/src --ignore-src  
