@@ -16,7 +16,7 @@
 
   <actor name="actor_1">
     <!-- The spawning point of the actor, and rotation -->
-    <pose>-0.3 -1 0 0 0 0</pose>
+    <pose>-0.3 -1 0 0 0 1.57</pose>
 
     <!-- The skin sets the texture used on the model -->
     <skin>
@@ -57,44 +57,15 @@
 
 
     <!-- The script was removed and replaced with this plugin to allow dynamic control over the trajectory -->
-    <plugin name="actor1_plugin" filename="libActorWalkPlugin.so">
+    <plugin name="actor1_plugin" filename="libPedsimActorPlugin.so">
       <target>12.3 -1 0</target>
-
-      <target_weight>1.15</target_weight>
-      <obstacle_weight>0.8</obstacle_weight>
       <animation_factor>5.1</animation_factor>
-
-      <ignore_obstacles>
-        <model>ground_plane_0</model>
-        <model>gutter_1</model>
-        <model>gutter_2</model>
-        <model>line_marker_1</model>
-        <model>line_marker_2</model>
-        <model>line_marker_3</model>
-        <model>line_marker_4</model>
-        <model>line_marker_5</model>
-        <model>line_marker_6</model>
-        <model>line_marker_7</model>
-        <model>line_marker_8</model>
-        <model>line_marker_9</model>
-        <model>line_marker_10</model>
-        <model>line_marker_11</model>
-        <model>line_marker_12</model>
-        <model>line_marker_13</model>
-        <model>line_marker_14</model>
-        <model>line_marker_15</model>
-        <model>line_marker_16</model>
-        <model>line_marker_17</model>
-        <model>line_marker_18</model>
-        <model>actor_1</model>
-        <model>actor_2</model>
-      </ignore_obstacles>
     </plugin>
   </actor>
 
   <actor name="actor_2">
     <!-- The spawning point of the actor, and rotation -->
-    <pose>12.3 1 0 0 0 0</pose>
+    <pose>12.3 1 0 0 0 -1.57</pose>
 
     <!-- The skin sets the texture used on the model -->
     <skin>
@@ -135,38 +106,9 @@
 
 
     <!-- The script was removed and replaced with this plugin to allow dynamic control over the trajectory -->
-    <plugin name="actor2_plugin" filename="libActorWalkPlugin.so">
+    <plugin name="actor2_plugin" filename="libPedsimActorPlugin.so">
       <target>-0.3 1 0</target>
-
-      <target_weight>1.15</target_weight>
-      <obstacle_weight>0.8</obstacle_weight>
       <animation_factor>5.1</animation_factor>
-
-      <ignore_obstacles>
-        <model>ground_plane_0</model>
-        <model>gutter_1</model>
-        <model>gutter_2</model>
-        <model>line_marker_1</model>
-        <model>line_marker_2</model>
-        <model>line_marker_3</model>
-        <model>line_marker_4</model>
-        <model>line_marker_5</model>
-        <model>line_marker_6</model>
-        <model>line_marker_7</model>
-        <model>line_marker_8</model>
-        <model>line_marker_9</model>
-        <model>line_marker_10</model>
-        <model>line_marker_11</model>
-        <model>line_marker_12</model>
-        <model>line_marker_13</model>
-        <model>line_marker_14</model>
-        <model>line_marker_15</model>
-        <model>line_marker_16</model>
-        <model>line_marker_17</model>
-        <model>line_marker_18</model>
-        <model>actor_1</model>
-        <model>actor_2</model>
-      </ignore_obstacles>
     </plugin>
   </actor>
 
