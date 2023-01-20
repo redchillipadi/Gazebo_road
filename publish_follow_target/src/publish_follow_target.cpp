@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 #include <gazebo_msgs/ModelStates.h>
-#include <people_msgs/Person.h>
+#include <people_msgs/PersonStamped.h>
 #include <algorithm>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
@@ -54,14 +54,16 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr& msg)
       //    velocity.x, velocity.y, velocity.z);
 
       // Create and publish the message
-      people_msgs::Person person;
-      person.name = msg->name[index];
-      person.position.x = msg->pose[index].position.x;
-      person.position.y = msg->pose[index].position.y;
-      person.position.z = msg->pose[index].position.z;
-      person.velocity.x = velocity.x;
-      person.velocity.y = velocity.y;
-      person.velocity.z = velocity.z;
+      people_msgs::PersonStamped person;
+      person.header.stamp = ros::Time::now();
+      person.header.frame_id = "crosswalk";
+      person.person.name = msg->name[index];
+      person.person.position.x = msg->pose[index].position.x;
+      person.person.position.y = msg->pose[index].position.y;
+      person.person.position.z = msg->pose[index].position.z;
+      person.person.velocity.x = velocity.x;
+      person.person.velocity.y = velocity.y;
+      person.person.velocity.z = velocity.z;
       pub.publish(person);
     }
 
@@ -104,7 +106,7 @@ int main(int argc, char** argv)
   ros::NodeHandle node;
 
   // Create the publisher
-  pub = node.advertise<people_msgs::Person>("/follow", 1);
+  pub = node.advertise<people_msgs::PersonStamped>("/follow", 1);
   ROS_INFO("Publishing output on %s", output_topic.c_str());
 
   // Create the subscriber
