@@ -159,6 +159,10 @@ target_link_libraries(robot_transform_broadcaster
   ${catkin_LIBRARIES}
 )
 
+add_executable(crosswalk_transform_broadcaster src/crosswalk_transform_broadcaster.cpp)
+target_link_libraries(crosswalk_transform_broadcaster
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
