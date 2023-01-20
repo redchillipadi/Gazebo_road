@@ -2,6 +2,10 @@
 #include <gazebo_msgs/ModelStates.h>
 #include <people_msgs/Person.h>
 #include <algorithm>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+
+// Name of the robot (poses are published relative to this)
+std::string robot_name;
 
 // Name of the target to follow (as identified in ModelStates message)
 std::string target_name;
@@ -30,7 +34,7 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr& msg)
   geometry_msgs::Point velocity;
 
   int index = std::distance(msg->name.begin(), std::find(msg->name.begin(), msg->name.end(), target_name));
-  if (index > 0 && index < msg->name.size()) {
+  if (index >= 0 && index < msg->name.size()) {
     if (has_previous_state) {
       ros::Duration duration = current_time - last_time;
       double delta_time = duration.toSec();
@@ -58,11 +62,10 @@ void callback(const gazebo_msgs::ModelStates::ConstPtr& msg)
       person.velocity.x = velocity.x;
       person.velocity.y = velocity.y;
       person.velocity.z = velocity.z;
-      // reliability, tagNames and tags are currently unused
       pub.publish(person);
     }
 
-    // Save state for next call
+    // Save state (in world coordinates) for next call
     old_position.x = msg->pose[index].position.x;
     old_position.y = msg->pose[index].position.y;
     old_position.z = msg->pose[index].position.z;
@@ -92,6 +95,7 @@ int main(int argc, char** argv)
 {
   // Hard coded parameters used by the module (TODO Convert to params in launch file)
   SetTarget("actor_1");
+  robot_name = "mrobot";
   std::string topic_name = "/gazebo/model_states";
   std::string output_topic = "/follow";
 
