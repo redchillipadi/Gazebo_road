@@ -56,6 +56,18 @@ void PedsimActorPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   else
     this->animationFactor = 4.5;
 
+  // Read in pedsim Id of agent to follow (use 0 to disable control by pedsim)
+  if (this->sdf && this->sdf->HasElement("pedsim_id"))
+    this->pedsimId = this->sdf->Get<uint64_t>("pedsim_id");
+  else
+    this->pedsimId = 0;
+
+  // Read in interpolation behaviour
+  if (this->sdf && this->sdf->HasElement("interpolate"))
+    this->interpolate = this->sdf->Get<bool>("interpolate");
+  else
+    this->interpolate = false;
+
   // Set up Gazebo transport
 
   this->node = transport::NodePtr(new transport::Node());
@@ -122,33 +134,44 @@ void PedsimActorPlugin::OnUpdate(const common::UpdateInfo &_info)
 {
   // Time delta
   double dt = (_info.simTime - this->lastUpdate).Double();
-
   ignition::math::Pose3d pose = this->actor->WorldPose();
-  ignition::math::Vector3d pos = this->target - pose.Pos();
-  ignition::math::Vector3d rpy = pose.Rot().Euler();
 
-  // Normalize the direction vector.
-  pos = pos.Normalize();
+  if (interpolate)
+  {
+    // Interpolated movement behaviour
+    ignition::math::Vector3d pos = this->target - pose.Pos();
+    ignition::math::Vector3d rpy = pose.Rot().Euler();
 
-  // Compute the yaw orientation
-  ignition::math::Angle yaw = atan2(pos.Y(), pos.X()) + 1.5707 - rpy.Z();
-  yaw.Normalize();
+    // Normalize the direction vector.
+    pos = pos.Normalize();
 
-  // If the target yaw is too far, rotate towards it rather than snapping
-  // TODO: Make the snapping rotation limit and scaling factor parameters in the SDF
-  if (std::abs(yaw.Radian()) > IGN_DTOR(10))
-    pose.Rot() = ignition::math::Quaterniond(1.5707, 0, rpy.Z() + yaw.Radian() * 0.001);
+    // Compute the yaw orientation
+    ignition::math::Angle yaw = atan2(pos.Y(), pos.X()) + 1.5707 - rpy.Z();
+    yaw.Normalize();
+
+    // If the target yaw is too far, rotate towards it rather than snapping
+    // TODO: Make the snapping rotation limit and scaling factor parameters in the SDF
+    if (std::abs(yaw.Radian()) > IGN_DTOR(10))
+      pose.Rot() = ignition::math::Quaterniond(1.5707, 0, rpy.Z() + yaw.Radian() * 0.001);
+    else
+      pose.Rot() = ignition::math::Quaterniond(1.5707, 0, rpy.Z() + yaw.Radian());
+
+    // Always move towards target
+    pose.Pos() += pos * this->velocity * dt;
+    // Height must always be 1m for Actor so feet touch the ground (assuming Actor model used)
+    // TODO: Make this a parameter in te SDF
+    pose.Pos().Z(1.0);
+  }
   else
-    pose.Rot() = ignition::math::Quaterniond(1.5707, 0, rpy.Z() + yaw.Radian());
-
-  // Always move towards target
-  pose.Pos() += pos * this->velocity * dt;
-  // vs Snap to target
-  // pose.Pos() += this->target - pose.Pos();
-
-  // Height must always be 1m for Actor so feet touch the ground (assuming Actor model used)
-  // TODO: Make this a parameter in te SDF
-  pose.Pos().Z(1.0);
+  {
+    // Snap to target behaviour
+    pose.Pos() += this->target - pose.Pos();
+    // Height must always be 1m for Actor so feet touch the ground (assuming Actor model used)
+    // TODO: Make this a parameter in te SDF
+    pose.Pos().Z(1.0);
+    double yaw = orientation.Euler().Z();
+    pose.Rot() = ignition::math::Quaterniond(1.5707, 0.0, 1.5707 + yaw);
+  }
 
   // Distance traveled is used to coordinate motion with the walking animation
   double distanceTraveled = (pose.Pos() - this->actor->WorldPose().Pos()).Length();
@@ -159,19 +182,26 @@ void PedsimActorPlugin::OnUpdate(const common::UpdateInfo &_info)
 }
 
 /////////////////////////////////////////////////
-void PedsimActorPlugin::pedsimCallback(const pedsim_msgs::AgentStatesConstPtr& msg)
+void PedsimActorPlugin::pedsimCallback(const pedsim_msgs::AgentStatesConstPtr &msg)
 {
   // All the pedsim messages seem to use odom
 
-  for (auto& agent : msg->agent_states)
+  for (auto &agent : msg->agent_states)
   {
-    std::stringstream ss;
-    ss << "id: " << agent.id << " type: " << agent.type << " social: " << agent.social_state << " pose: ("
-      << agent.pose.position.x << ", " << agent.pose.position.y << ", " << agent.pose.position.z << ") orientation: ("
-      << agent.pose.orientation.x << ", " << agent.pose.orientation.y << ", " << agent.pose.orientation.z << ", " << agent.pose.orientation.w << ") twist: Linear ("
-      << agent.twist.linear.x << ", " << agent.twist.linear.y << ", " << agent.twist.linear.z << ") Angular ("
-      << agent.twist.angular.x << ", " << agent.twist.angular.y << ", " << agent.twist.angular.z << ")" << std::endl;
-    std::cout << ss.str();
+    if (agent.id == pedsimId)
+    {
+      SetTarget(agent.pose.position.x, agent.pose.position.y, agent.pose.position.z);
+      SetOrientation(agent.pose.orientation.x, agent.pose.orientation.y, agent.pose.orientation.z, agent.pose.orientation.w);
+      this->velocity = sqrt(agent.twist.linear.x * agent.twist.linear.x + agent.twist.linear.y * agent.twist.linear.y + agent.twist.linear.z * agent.twist.linear.z);
+
+      std::stringstream ss;
+      ss << "id: " << agent.id << " type: " << agent.type << " social: " << agent.social_state << " pose: ("
+         << agent.pose.position.x << ", " << agent.pose.position.y << ", " << agent.pose.position.z << ") orientation: ("
+         << agent.pose.orientation.x << ", " << agent.pose.orientation.y << ", " << agent.pose.orientation.z << ", " << agent.pose.orientation.w << ") twist: Linear ("
+         << agent.twist.linear.x << ", " << agent.twist.linear.y << ", " << agent.twist.linear.z << ") Angular ("
+         << agent.twist.angular.x << ", " << agent.twist.angular.y << ", " << agent.twist.angular.z << ")" << std::endl;
+      std::cout << ss.str();
+    }
   }
 }
 
@@ -182,12 +212,12 @@ void PedsimActorPlugin::SetTarget(double x, double y, double z)
   this->target.Z(z);
 }
 
-void PedsimActorPlugin::OnMsg(ConstVector3dPtr& msg)
+void PedsimActorPlugin::OnMsg(ConstVector3dPtr &msg)
 {
   this->SetTarget(msg->x(), msg->y(), msg->z());
 }
 
-void PedsimActorPlugin::OnRosMsg(const geometry_msgs::Vector3ConstPtr& msg)
+void PedsimActorPlugin::OnRosMsg(const geometry_msgs::Vector3ConstPtr &msg)
 {
   this->SetTarget(msg->x, msg->y, msg->z);
 }
@@ -195,7 +225,16 @@ void PedsimActorPlugin::OnRosMsg(const geometry_msgs::Vector3ConstPtr& msg)
 void PedsimActorPlugin::QueueThread()
 {
   static const double timeout = 0.01;
-  while (this->rosNode->ok()) {
+  while (this->rosNode->ok())
+  {
     this->rosQueue.callAvailable(ros::WallDuration(timeout));
   }
+}
+
+void PedsimActorPlugin::SetOrientation(double x, double y, double z, double w)
+{
+  this->orientation.X(x);
+  this->orientation.Y(y);
+  this->orientation.Z(z);
+  this->orientation.W(w);
 }
